@@ -1,0 +1,160 @@
+.background {
+  position: absolute;
+  overflow: hidden;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  z-index: -100;
+  background-color: #0f172a;
+}
+
+.fade3s {
+  animation: fadeIn 3s;
+}
+
+.fade6s {
+  animation: fadeIn 6s;
+}
+.fade9s {
+  animation: fadeIn 9s;
+}
+
+.typewriter h1 {
+  overflow: hidden; /* Ensures the content is not revealed until the animation */
+  white-space: nowrap; /* Keeps the content on a single line */
+  margin: 0 auto; /* Gives that scrolling effect as the typing happens */
+  letter-spacing: 0.05em; /* Adjust as needed */
+  animation: typing 5s steps(40, end);
+}
+/* The typing effect */
+@keyframes typing {
+  0% {
+    width: 0;
+  }
+  33% {
+    width: 100%;
+  }
+  95% {
+    width: 100%;
+  }
+  100% {
+    width: 0;
+  }
+}
+
+.slider {
+  animation: centerOut 2s;
+}
+
+@keyframes centerOut {
+  0% {
+    transform: translate(0%, 16vh);
+  }
+  55% {
+    transform: translate(0%, 16vh);
+  }
+  100% {
+    transform: translate(0%, 0%);
+  }
+}
+
+/* The typewriter cursor effect */
+@keyframes blink-caret {
+  from,
+  to {
+    border-color: transparent;
+  }
+  50% {
+    border-color: #94a3b8;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  55% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.button {
+  animation: fadeIn 4s, pulse 1s linear infinite alternate 5s;
+  transition: transform 0.5s linear;
+}
+.button:hover {
+  animation: fadeIn 4s, pulseHover 1s linear infinite alternate;
+  transform: scale(1.2);
+}
+
+@keyframes pulse {
+  from {
+    box-shadow: 0px 0px 30px blue;
+  }
+  to {
+    box-shadow: 0px 0px 55px turquoise;
+  }
+}
+
+@keyframes pulseHover {
+  from {
+    box-shadow: 0px 0px 40px rgb(236 72 153);
+  }
+  to {
+    box-shadow: 0px 0px 65px rgb(234 179 8);
+  }
+}
+
+.card {
+  animation: fadeIn2 1s;
+  transform-style: preserve-3d;
+}
+
+.card::after {
+  box-shadow: 0 30px 20px rgba(0, 0, 0, 0.3);
+}
+
+.card a {
+  transform-style: preserve-3d;
+}
+
+.card a * {
+  transform-style: preserve-3d;
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.1))
+    drop-shadow(0 1px 1px rgb(0 0 0 / 0.06));
+}
+.card a img {
+  transform: translateZ(20px);
+}
+
+.card a p {
+  transform: translateZ(10px);
+}
+
+@keyframes fadeIn2 {
+  from {
+    opacity: 0;
+    transform: scale(0) rotate(180deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+body {
+  transform-style: preserve-3d;
+}
+/* For Webkit-based browsers (Chrome, Safari and Opera) */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* For IE, Edge and Firefox */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}

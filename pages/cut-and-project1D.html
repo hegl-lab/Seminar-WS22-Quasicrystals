@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../js/p5.js"></script>
+    <script src="../js/storage.js">
+      addVisitedSite("cut-and-project1D.html");
+    </script>
+    <script
+      type="text/javascript"
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    ></script>
+    <link rel="icon" type="image/x-icon" href="/screenshots/favicon.ico" />
+    <title>Fibonacci Tiling</title>
+  </head>
+  <body
+    class="bg-gradient-to-r from-yellow-500 to-green-500 text-white m-4 sm:m-8 md:m-16"
+  >
+    <!-- <a href="../index.html"> Home </a> -->
+    <h1 class="text-3xl sm:text-4xl md:text-5xl text-center font-mono">
+      Fibonacci Tiling
+    </h1>
+    <p class="text-center text-sm">the simplest quasiperiodic tiling</p>
+    <div class="pb-16"></div>
+    <div
+      class="h-min basis-1/2 m-2 p-2 bg-gradient-to-br from-slate-50 to-slate-200 text-slate-900 rounded-lg font-mono tracking-tight leading-tight shadow-lg"
+    >
+      <h2 class="text-2xl">The Fibonacci Sequence</h2>
+      <p class="text-justify">
+        The simplest quasiperiodic tiling is the Fibonacci sequence. This is a
+        1-dimensional set of segments of two possible lengths: short (S) and
+        long (L). The ratio be- tween the length of these two segments is the
+        golden ratio, τ. Generations of this sequence can be created using the
+        the Cut and Project Method seeing below.
+      </p>
+    </div>
+    <div class="flex flex-col sm:flex-col md:flex-row">
+      <div
+        class="h-min basis-1/2 m-2 p-2 bg-gradient-to-br from-slate-50 to-slate-200 text-slate-900 rounded-lg font-mono tracking-tight leading-tight shadow-lg"
+      >
+        <h2 class="text-2xl">The Cut and Project Method in 1D</h2>
+        <p class="text-justify">
+          In order to generate one-dimensional quasiperiodic sequences, we first
+          define a 2D periodic tiling. A slice is projected through this
+          periodic tiling, at an angle of θ to the x–axis, and of a given
+          thickness Δ. Points that fall within this region are ‘accepted’ .
+          These accepted points are then projected onto a line parallel to this
+          slice. By then rotating these projected points by the angle θ, these
+          points are now parallel to the x–axis. This process is shown in Figure
+          10. Provided the angle formed describes an irrational gradient for
+          this region, the sequence produced will exhibit quasiperiodicity.
+          Rational gradients will give periodic sequences. If the thickness and
+          angle of this region are chosen specifically as θ = tan−1( 1 τ ) and ∆
+          = τ (sinθ + cosθ), then the resulting sequence will be a section of
+          the Fibonacci sequence as seen previously. If the thickness is
+          increased by a factor of τ, as seen on the right of Figure 10, the
+          resulting sequence will be another Fibonacci sequence, deflated with
+          respect to the original sequence.
+        </p>
+        <br />
+        <div
+          class="h-min basis-1/2 mt-5 md:m-2 py-4 md:p-2 px-10 bg-gradient-to-br from-slate-900 to-slate-700 rounded-lg shadow-lg text-slate-100"
+        >
+          <h3 class="text-2xl text-center">Try out</h3>
+          <div class="flex flex-col md:flex-row">
+            <div class="text-center">Angle...:</div>
+            <input
+              class="mx-0 md:mx-5"
+              type="range"
+              min="0"
+              max="89"
+              value="0"
+              oninput="changeAngle(this.value)"
+              onchange="changeAngle(this.value)"
+            />
+            <div class="text-center" id="angle">0</div>
+          </div>
+          <div class="flex flex-col md:flex-row">
+            <div class="text-center">Thickness</div>
+            <input
+              class="mx-0 md:mx-5"
+              type="range"
+              min="0"
+              max="3"
+              step="0.1"
+              value="2"
+              oninput="changeThickness(this.value)"
+              onchange="changeThickness(this.value)"
+            />
+            <div class="text-center" id="thickness">2</div>
+          </div>
+          <div class="flex flex-col md:flex-row">
+            <div class="text-center">Shift....</div>
+            <input
+              class="mx-0 md:mx-5"
+              type="range"
+              min="-1"
+              max="1"
+              step="0.01"
+              value="0"
+              oninput="changeShift(this.value)"
+              onchange="changeShift(this.value)"
+            />
+            <div class="text-center" id="shift">2</div>
+          </div>
+        </div>
+      </div>
+      <div
+        id="tilings"
+        class="overflow-hidden h-min basis-1/2 m-2 p-2 bg-gradient-to-br from-slate-900 to-slate-700 rounded-lg shadow-lg"
+      ></div>
+    </div>
+    <!-- <div class="pb-16"></div> -->
+    <div
+      class="h-min basis-1/2 m-2 p-2 bg-gradient-to-br from-slate-50 to-slate-200 text-slate-900 rounded-lg font-mono tracking-tight leading-tight shadow-lg"
+    >
+      <h2 class="text-2xl">Note</h2>
+      <p class="text-justify">
+        The vertices of a section of the 1D Fibonacci sequence can be created by
+        intersecting a 1D slice at an angle to the x–axis of \(\Theta =
+        \tan^{-1}(\cfrac{1}{\tau})\) with a 2D lattice. The fibonacci sequence
+        then follows by projection.
+      </p>
+    </div>
+
+    <div
+      id="tilings"
+      class="overflow-hidden h-min basis-1/2 m-2 p-2 bg-gradient-to-br from-slate-900 to-slate-700 rounded-lg shadow-lg"
+    >
+      <!-- <button
+        onclick="start()"
+        class="m-2 p-2 text-2xl button bg-gradient-to-r hover:from-slate-50 hover:to-slate-200 hover:text-slate-900 hover:outline outline-2 outline-slate-900 from-slate-700 to-slate-900 p-1 rounded-md shadow-lg"
+      >
+      Click here to continue
+    </button> -->
+      <div class="text-2xl">
+        <span class="font-bold">Coming up: </span>
+        Fibonacci tilings in higher dimensions (2D).
+        <a class="underline underline-offset-4" href="./cut-and-project2D.html"
+          >Click to continue</a
+        >
+        or
+        <a class="underline underline-offset-4" href="../gallery.html"
+          >go to the gallery</a
+        >.
+      </div>
+    </div>
+    <script src="../sketches/cut-and-project1D.js"></script>
+  </body>
+</html>

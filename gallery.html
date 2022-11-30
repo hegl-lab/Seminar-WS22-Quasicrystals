@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <script src="js/p5.js"></script> -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/particles.js"></script>
+    <link rel="icon" type="image/x-icon" href="/screenshots/favicon.ico" />
+    <script
+      src="https://kit.fontawesome.com/d992066cd9.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="js/storage.js"></script>
+    <script type="text/javascript" src="gallery.js"></script>
+    <title>HEGL Quasiperiodic Patterns</title>
+    <link rel="stylesheet" href="custom.css" />
+  </head>
+  <body class="bg-black text-slate-100 place-items-center">
+    <div class="sticky background w-screen h-screen" id="particles-js"></div>
+    <div class="grid place-items-center -mt-[90vh] text-3xl z-10">
+      <div class="bg-black/25 p-2 rounded-2xl flex items-center justify-center">
+        <i class="fa-solid fa-magnifying-glass pr-4"> </i>
+        <input
+          id="searchbox"
+          class="font-mono text-2xl bg-transparent focus:outline-none"
+          placeholder="search gallery"
+          value=""
+          autocomplete="on"
+        />
+      </div>
+
+      <div id="gallery" class="columns-1 md:columns-2 lg:columns-3 mt-8"></div>
+      <div id="galleryfeedback"></div>
+    </div>
+  </body>
+  <script>
+    loadStorage();
+    /* particlesJS.load(@dom-id, @path-json, @callback (optional)); */
+    particlesJS.load("particles-js", "assets/particles.json", function () {
+      console.log("callback - particles.js config loaded");
+    });
+
+    function search() {
+      var text = document.getElementById("searchbox").value;
+      showGallery(".*" + text + ".*");
+    }
+
+    document.getElementById("searchbox").addEventListener("input", search);
+
+    showGallery();
+
+    function showGallery(regex = ".*") {
+      var gallery = document.getElementById("gallery");
+      gallery.innerHTML = "";
+      var found = false;
+      for (var i = 0; i < cards.length; i++) {
+        if (
+          (cards[i].title.match(regex) || cards[i].desc.match(regex)) &&
+          !storage.visited.includes(cards[i].link)
+        ) {
+          found = true;
+          gallery.innerHTML += `
+          <div id="card" class="flex flex-col break-inside-avoid">
+            <span class="font-mono ml-2 z-10 -mb-8 w-12 text-xl p-1 bg-blue-500 text-slate-100 rounded-lg">new</span>
+            <a
+              href="pages/${cards[i].link}"
+              class="block bg-gradient-to-br from-slate-100 to-slate-300 text-slate-900 p1 rounded-md w-72 grid place-items-center hover:outline outline-offset-2 outline-2 outline-slate-500 m-3"
+            >
+            <div>
+              <span>${cards[i].title}</span>
+              </div>
+              <img
+              class="object-cover"
+              src="screenshots/${cards[i].src}"
+                alt="alt"
+              />
+              <p class="m-2 text-sm leading-3">${cards[i].desc}</p>
+              </a>
+              </div>`;
+        }
+      }
+      for (var i = 0; i < cards.length; i++) {
+        if (
+          (cards[i].title.match(regex) || cards[i].desc.match(regex)) &&
+          storage.visited.includes(cards[i].link)
+        ) {
+          found = true;
+          gallery.innerHTML += `
+          <div id="card" class="flex flex-col break-inside-avoid">
+            <a
+              href="pages/${cards[i].link}"
+              class="block bg-gradient-to-br from-slate-100 to-slate-300 text-slate-900 p1 rounded-md w-72 grid place-items-center hover:outline outline-offset-2 outline-2 outline-slate-500 m-3"
+            >
+              <p>${cards[i].title}</p>
+              <img
+              class="object-cover"
+              src="screenshots/${cards[i].src}"
+                alt="alt"
+              />
+              <p class="m-2 text-sm leading-3">${cards[i].desc}</p>
+              </a>
+              </div>`;
+        }
+      }
+      if (!found) {
+        document.getElementById(
+          "galleryfeedback"
+        ).innerHTML = `<div class="text-2xl">No results found</div>`;
+      } else {
+        document.getElementById("galleryfeedback").innerHTML = "";
+      }
+    }
+  </script>
+</html>

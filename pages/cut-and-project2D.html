@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../js/p5.js"></script>
+    <script src="../js/storage.js"></script>
+    <script
+      type="text/javascript"
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    ></script>
+    <link rel="icon" type="image/x-icon" href="/screenshots/favicon.ico" />
+    <title>Fibonacci Tilings 2D</title>
+  </head>
+  <body
+    class="bg-gradient-to-r from-green-500 to-blue-500 text-white m-4 sm:m-8 md:m-16"
+  >
+    <!-- <a href="../index.html"> Home </a> -->
+    <h1 class="text-3xl sm:text-4xl md:text-5xl text-center font-mono">
+      Fibonacci Tiling in higher dimensions
+    </h1>
+    <p class="text-center text-sm">the simplest quasiperiodic tiling</p>
+    <div class="pb-16"></div>
+    <div class="flex flex-col sm:flex-col md:flex-row">
+      <div
+        class="h-min basis-1/2 m-2 p-2 bg-gradient-to-br from-slate-50 to-slate-200 text-slate-900 rounded-lg font-mono tracking-tight leading-tight shadow-lg"
+      >
+        <h2 class="text-2xl">The Fibonacci Sequence 2D</h2>
+        <p class="text-justify">
+          By adding a third dimension to the lattice, it is possible to use the
+          cut and project method to generate 2D tilings. This 3D lattice is
+          intersected by a 2D 8 window, which is at an angle of θ to both the
+          x–axis and the y–axis. By rotating the accepted points onto the x–y
+          plane, the vertices of the Fibonacci square tiling are formed
+        </p>
+        <br />
+        <div
+          class="h-min basis-1/2 mt-5 md:m-2 py-4 md:p-2 px-10 bg-gradient-to-br from-slate-900 to-slate-700 rounded-lg shadow-lg text-slate-100"
+        >
+          <h3 class="text-2xl text-center">Try out</h3>
+          <div class="flex flex-col md:flex-row">
+            <div class="text-center">Angle...:</div>
+            <input
+              class="mx-0 md:mx-5"
+              type="range"
+              min="0"
+              max="80"
+              value="0"
+              oninput="changeAngle(this.value)"
+              onchange="changeAngle(this.value)"
+            />
+            <div class="text-center" id="angle">0</div>
+          </div>
+          <div class="flex flex-col md:flex-row">
+            <div class="text-center">Thickness</div>
+            <input
+              class="mx-0 md:mx-5"
+              type="range"
+              min="0"
+              max="4"
+              step="0.1"
+              value="2"
+              oninput="changeThickness(this.value)"
+              onchange="changeThickness(this.value)"
+            />
+            <div class="text-center" id="thickness">2</div>
+          </div>
+        </div>
+      </div>
+      <div
+        id="tilings"
+        class="overflow-hidden h-min basis-1/2 m-2 p-2 bg-gradient-to-br from-slate-900 to-slate-700 rounded-lg shadow-lg"
+      ></div>
+    </div>
+    <!-- <div class="pb-16"></div> -->
+    <div
+      class="h-min basis-1/2 m-2 p-2 bg-gradient-to-br from-slate-50 to-slate-200 text-slate-900 rounded-lg font-mono tracking-tight leading-tight shadow-lg"
+    >
+      <h2 class="text-2xl">Note</h2>
+      <p class="text-justify">
+        The vertices of a section of the 1D Fibonacci sequence can be created by
+        intersecting a 1D slice at an angle to the x–axis of \(\Theta =
+        \tan^{-1}(\cfrac{1}{\tau})\) with a 2D lattice. The fibonacci sequence
+        then follows by projection.
+      </p>
+    </div>
+
+    <div
+      id="tilings"
+      class="overflow-hidden h-min basis-1/2 m-2 p-2 bg-gradient-to-br from-slate-900 to-slate-700 rounded-lg shadow-lg"
+    >
+      <!-- <button
+        onclick="start()"
+        class="m-2 p-2 text-2xl button bg-gradient-to-r hover:from-slate-50 hover:to-slate-200 hover:text-slate-900 hover:outline outline-2 outline-slate-900 from-slate-700 to-slate-900 p-1 rounded-md shadow-lg"
+      >
+      Click here to continue
+    </button> -->
+      <div class="text-2xl">
+        <span class="font-bold">Coming up: </span>
+        Fibonacci tilings in higher dimensions (2D).
+        <a
+          class="underline underline-offset-4"
+          href="./cut-and-projectPenrose.html"
+          >Click to continue</a
+        >
+        or
+        <a class="underline underline-offset-4" href="../gallery.html"
+          >go to the gallery</a
+        >.
+      </div>
+    </div>
+    <script>
+      addVisitedSite("cut-and-project2D.html");
+
+      let angle = 31.72;
+      let thickness = 1.334;
+
+      let tau = (1 + Math.sqrt(5)) / 2;
+      let theta = Math.atan(1 / tau);
+      let epsilon = 0.01;
+      let delta = Math.sin(theta) + Math.cos(theta);
+
+      let slope = 0;
+
+      function resetVals() {
+        changeAngle(radiansToDegrees(theta));
+        changeThickness(1.6);
+      }
+
+      resetVals();
+
+      function changeAngle(val) {
+        document.getElementById("angle").innerHTML = val;
+        angle = val;
+      }
+
+      function changeThickness(val) {
+        document.getElementById("thickness").innerHTML = val;
+        thickness = val;
+      }
+
+      function degreesToRadians(degrees) {
+        var pi = Math.PI;
+        return degrees * (pi / 180);
+      }
+
+      function radiansToDegrees(radians) {
+        var pi = Math.PI;
+        return radians * (180 / pi);
+      }
+
+      function sketch_tilings(p) {
+        let gradient = 1 / tau;
+        function maxAccepted(x) {
+          return slope * x + thickness / 2;
+        }
+
+        function minAccepted(x) {
+          return slope * x - thickness / 2;
+        }
+        function isWithinRegion(x, y, z) {
+          if (z > minAccepted(x) && z < maxAccepted(x)) {
+            if (z > minAccepted(y) && z < maxAccepted(y)) {
+              return true;
+            }
+          }
+        }
+        p.setup = function () {
+          p.createCanvas(1850, 600);
+        };
+
+        let oldAngle = -1;
+        let oldThickness = -1;
+        p.draw = function () {
+          if (oldAngle !== angle) {
+            oldAngle = angle;
+            p.update();
+          } else if (oldThickness !== thickness) {
+            oldThickness = thickness;
+            p.update();
+          }
+        };
+
+        p.update = function () {
+          slope =
+            p.sin(degreesToRadians(angle)) / p.cos(degreesToRadians(angle));
+
+          p.clear();
+          // p.fill(0, 0, 0, 0);
+          p.stroke(71, 85, 105);
+          p.fill(255);
+          let cellSize = 40;
+          let regionWidth = 1850 / cellSize;
+          // draw grid with cellSize*cellSize cells
+          p.strokeWeight(1);
+          p.translate(20, 20);
+
+          zMax = p.ceil(maxAccepted(regionWidth / cellSize + 1));
+          zMin = p.floor(minAccepted(0));
+
+          x_accepted = [];
+          y_accepted = [];
+          z_accepted = [];
+
+          for (x = -1; x <= (regionWidth * 3) / cellSize + 3; x++) {
+            for (y = 0; y <= (regionWidth * 3) / cellSize + 3; y++) {
+              for (z = zMin; z <= zMax; z++) {
+                if (isWithinRegion(x, y, z)) {
+                  x_accepted.push(x);
+                  y_accepted.push(y);
+                  z_accepted.push(z);
+                }
+              }
+            }
+          }
+          for (i = 0; i < x_accepted.length; i++) {
+            for (j = 0; j < y_accepted.length; j++) {
+              let x_final =
+                (x_accepted[i] + z_accepted[i] * gradient) /
+                (1 + gradient ** 2);
+              let y_final =
+                (y_accepted[j] + z_accepted[j] * gradient) /
+                (1 + gradient ** 2);
+              p.ellipse(x_final * cellSize * 3, y_final * cellSize * 3, 10, 10);
+            }
+          }
+        };
+      }
+      new p5(sketch_tilings, "tilings");
+    </script>
+  </body>
+</html>

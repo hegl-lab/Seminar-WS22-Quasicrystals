@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <script src="js/p5.js"></script> -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/particles.js"></script>
+    <link rel="icon" type="image/x-icon" href="/screenshots/favicon.ico" />
+    <script
+      src="https://kit.fontawesome.com/d992066cd9.js"
+      crossorigin="anonymous"
+    ></script>
+    <script type="text/javascript" src="gallery.js"></script>
+    <script>
+      /* particlesJS.load(@dom-id, @path-json, @callback (optional)); */
+      particlesJS.load("particles-js", "assets/particles.json", function () {
+        console.log("callback - particles.js config loaded");
+      });
+
+      let titles = [
+        "Quasiperiodic Patterns",
+        "Click start to begin",
+        "Browse the gallery",
+      ];
+      let index = 0;
+      // Will execute myCallback every 0.5 seconds
+      var intervalID = window.setInterval(myCallback, 5000);
+
+      var cardIndex = 0;
+
+      function myCallback() {
+        index++;
+        if (index >= titles.length) {
+          index = 0;
+        }
+        var banner = document.getElementById("banner");
+        banner.innerHTML = titles[index];
+        banner.style.animation = "none";
+        banner.offsetHeight; /* trigger reflow */
+        banner.style.animation = null;
+
+        if (index === 1) {
+          var card = document.getElementById("card");
+          card.innerHTML = `
+          <a href="pages/${cards[cardIndex].link}"
+            class="block bg-gradient-to-br from-slate-100 
+            to-slate-300 text-slate-900 p1 rounded-md 
+            w-40 h-56 grid place-items-center hover:outline outline-offset-2 outline-2 outline-slate-500"
+          >
+            <p>${cards[cardIndex].title}</p>
+            <img
+              class="object-cover"
+              src="screenshots/${cards[cardIndex].src}"
+              alt="${cards[cardIndex].title}"
+            />
+            <p class="m-2 text-sm leading-3">${cards[cardIndex].desc}</p>
+          </a>
+          `;
+          card.style.animation = "none";
+          card.offsetHeight; /* trigger reflow */
+          card.style.animation = null;
+          document.addEventListener("mousemove", function (e) {
+            let xAxis = -(window.innerWidth / 2 - e.pageX) / 11.2;
+            let yAxis = (window.innerHeight / 2 - e.pageY) / 8;
+            card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+            // if (xAxis < 0) {}
+          });
+          cardIndex++;
+          if (cardIndex >= cards.length) {
+            cardIndex = 0;
+          }
+        }
+      }
+      function start() {
+        window.location.href = "pages/introduction.html";
+      }
+    </script>
+    <title>HEGL Quasiperiodic Patterns</title>
+    <link rel="stylesheet" href="custom.css" />
+  </head>
+  <body class="bg-black text-slate-100 grid place-items-center">
+    <div class="background fade3s w-full h-full" id="particles-js"></div>
+    <div class="grid place-items-center h-screen typewriter">
+      <div class=""></div>
+      <div class=""></div>
+      <div class="slider">
+        <h1 id="banner" class="p-2 text-2xl sm:text-3xl md:text-5xl">
+          Quasiperiodic Patterns
+        </h1>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-3">
+        <div
+          class="hidden sm:block sm:grid sm:place-items-center sm:text-4xl fade9s"
+          onclick="location.href='gallery.html';"
+        >
+          <i class="fa-solid fa-book px-4"></i>
+        </div>
+        <div id="card" class="card"></div>
+        <div
+          class="hidden sm:block sm:grid sm:place-items-center sm:text-4xl fade9s"
+        >
+          <i class="hidden fa-solid fa-palette"></i>
+        </div>
+      </div>
+      <div class="sm:hidden grid grid-cols-2 text-4xl fade9s text-center">
+        <i
+          class="fa-solid fa-book px-4"
+          onclick="location.href='gallery.html';"
+        ></i>
+        <i class="hidden fa-solid fa-palette px-4"></i>
+      </div>
+      <button
+        onclick="start()"
+        class="text-2xl button bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 p-1 rounded-md"
+      >
+        Start here
+      </button>
+      <div class=""></div>
+      <div class=""></div>
+    </div>
+    <!-- <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <ul>
+      <li>
+        <a href="pages/cut-and-project1D.html">Cut and project 1D</a>
+      </li>
+      <li>
+        <a href="pages/cut-and-project2D.html">Cut and project 2D</a>
+      </li>
+    </ul>
+    <a href="https://github.com/cyamn/HEGL-quasiperiodic-patterns"
+      >open on GitHub</a
+    > -->
+  </body>
+</html>

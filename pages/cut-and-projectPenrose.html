@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../js/p5.js"></script>
+    <script src="../js/storage.js"></script>
+    <script
+      type="text/javascript"
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    ></script>
+    <link rel="icon" type="image/x-icon" href="/screenshots/favicon.ico" />
+    <title>Fibonacci Tilings 2D</title>
+  </head>
+  <body
+    class="bg-gradient-to-r from-blue-500 to-pink-500 text-white m-4 sm:m-8 md:m-16"
+  >
+    <!-- <a href="../index.html"> Home </a> -->
+    <h1 class="text-3xl sm:text-4xl md:text-5xl text-center font-mono">
+      Penrose Tiling
+    </h1>
+    <p class="text-center text-sm">the most famous quasiperiodic tiling</p>
+    <div class="pb-16"></div>
+    <div class="flex flex-col sm:flex-col md:flex-row">
+      <div
+        class="h-min basis-1/2 m-2 p-2 bg-gradient-to-br from-slate-50 to-slate-200 text-slate-900 rounded-lg font-mono tracking-tight leading-tight shadow-lg"
+      >
+        <h2 class="text-2xl">Penrose Tiling</h2>
+        <p class="text-justify">
+          A Penrose tiling is an example of an aperiodic tiling. Here, a tiling
+          is a covering of the plane by non-overlapping polygons or other
+          shapes, and aperiodic means that shifting any tiling with these shapes
+          by any finite distance, without rotation, cannot produce the same
+          tiling. However, despite their lack of translational symmetry, Penrose
+          tilings may have both reflection symmetry and fivefold rotational
+          symmetry. Penrose tilings are named after mathematician and physicist
+          Roger Penrose, who investigated them in the 1970s.
+        </p>
+        <br />
+        <div
+          class="h-min basis-1/2 mt-5 md:m-2 py-4 md:p-2 px-10 bg-gradient-to-br from-slate-900 to-slate-700 rounded-lg shadow-lg text-slate-100"
+        >
+          <h3 class="text-2xl text-center">Try out</h3>
+          <div class="flex flex-col md:flex-row">
+            <div class="text-center">shift X:</div>
+            <input
+              class="mx-0 md:mx-5"
+              type="range"
+              min="0"
+              max="0.5"
+              value="0.25"
+              step="0.05"
+              oninput="changeLambdaX(this.value)"
+              onchange="changeLambdaX(this.value)"
+            />
+            <div class="text-center" id="lambdaX">0.25</div>
+          </div>
+          <div class="flex flex-col md:flex-row">
+            <div class="text-center">shift Y:</div>
+            <input
+              class="mx-0 md:mx-5"
+              type="range"
+              min="0"
+              max="0.5"
+              value="0.25"
+              step="0.05"
+              oninput="changeLambdaY(this.value)"
+              onchange="changeLambdaY(this.value)"
+            />
+            <div class="text-center" id="lambdaY">0.25</div>
+          </div>
+          <div class="flex flex-col md:flex-row">
+            <div class="text-center">shift Z:</div>
+            <input
+              class="mx-0 md:mx-5"
+              type="range"
+              min="0"
+              max="0.5"
+              value="0.25"
+              step="0.05"
+              oninput="changeLambdaZ(this.value)"
+              onchange="changeLambdaZ(this.value)"
+            />
+            <div class="text-center" id="lambdaZ">0.25</div>
+          </div>
+          <div class="flex flex-col md:flex-row">
+            <div class="text-center">shift C:</div>
+            <input
+              class="mx-0 md:mx-5"
+              type="range"
+              min="0"
+              max="0.5"
+              value="0.25"
+              step="0.05"
+              oninput="changeLambdaC(this.value)"
+              onchange="changeLambdaC(this.value)"
+            />
+            <div class="text-center" id="lambdaC">0.25</div>
+          </div>
+          <div class="flex flex-col md:flex-row">
+            <div class="text-center">shift V:</div>
+            <input
+              class="mx-0 md:mx-5"
+              type="range"
+              min="0"
+              max="0.5"
+              value="0.25"
+              step="0.05"
+              oninput="changeLambdaV(this.value)"
+              onchange="changeLambdaV(this.value)"
+            />
+            <div class="text-center" id="lambdaV">0.25</div>
+          </div>
+        </div>
+      </div>
+      <div
+        id="tilings"
+        class="overflow-hidden h-min basis-1/2 m-2 p-2 bg-gradient-to-br from-slate-900 to-slate-700 rounded-lg shadow-lg"
+      ></div>
+    </div>
+    <!-- <div class="pb-16"></div> -->
+    <div
+      class="h-min basis-1/2 m-2 p-2 bg-gradient-to-br from-slate-50 to-slate-200 text-slate-900 rounded-lg font-mono tracking-tight leading-tight shadow-lg"
+    >
+      <h2 class="text-2xl">Note</h2>
+      <p class="text-justify">
+        The vertices of a section of the 1D Fibonacci sequence can be created by
+        intersecting a 1D slice at an angle to the x–axis of \(\Theta =
+        \tan^{-1}(\cfrac{1}{\tau})\) with a 2D lattice. The fibonacci sequence
+        then follows by projection.
+      </p>
+    </div>
+
+    <div
+      id="tilings"
+      class="overflow-hidden h-min basis-1/2 m-2 p-2 bg-gradient-to-br from-slate-900 to-slate-700 rounded-lg shadow-lg"
+    >
+      <!-- <button
+        onclick="start()"
+        class="m-2 p-2 text-2xl button bg-gradient-to-r hover:from-slate-50 hover:to-slate-200 hover:text-slate-900 hover:outline outline-2 outline-slate-900 from-slate-700 to-slate-900 p-1 rounded-md shadow-lg"
+      >
+      Click here to continue
+    </button> -->
+      <div class="text-2xl">
+        <span class="font-bold">Coming up: </span>
+        Fibonacci tilings in higher dimensions (2D).
+        <a class="underline underline-offset-4" href="">Click to continue</a>
+        or
+        <a class="underline underline-offset-4" href="../gallery.html"
+          >go to the gallery</a
+        >.
+      </div>
+    </div>
+    <script src="../sketches/penrose.js"></script>
+  </body>
+</html>
