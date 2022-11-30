@@ -10,26 +10,30 @@ in Python](http://pcwww.liv.ac.uk/~hemraj/thesis/BSc/2021_Daniel_Gouldsbrough_BS
 Key tasks include understanding the surrounding topic and rewriting & extending the given python
 code into javascript using [p5js](https://p5js.org/)
 
+The seminar group aims to create an interactive website to help anyone understand and visualize the concepts stated in aboves paper.
+
 ## Timeline
 
 ✅ Done:
 
-- rewrite
-  - CutAndProject1D.py
-  - CutAndProject2D.py
+- CutAndProject1D.py in Javascript p5js
+- CutAndProject2D.py in Javascript p5js
+- come up with interesting layout to put the examples in
+- implement cut and project method for Penrose tilings
+- make all examples interactive
 
 ⏳ Todo:
 
-- extend cut and project method to Penrose tilings
+- make CutAndProject1D more visual
+- optimize cut and project methods for Penrose tiling (e.g. with digital geometry)
+- update introduction page (has logical errors)
+- implement Wang tilings
+- change the text to describe the examples better
 - ...
 
 ## Screenshots
 
-![fibonacci-tiling1D](screenshots//fibonacci-tiling1D.png)
-cut-and-project1D.js
-
-![fibonacci-tiling2D](screenshots//fibonacci-tiling2D.png)
-cut-and-project2D.js
+![montage](screenshots//montage.png)
 
 ## Acknowledgements
 
