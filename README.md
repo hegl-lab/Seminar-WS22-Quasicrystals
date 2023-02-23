@@ -14,7 +14,7 @@ The seminar group aimed to create an interactive website to help anyone understa
 
 ## Screenshots
 
-![montage](screenshots//montage.png)
+![montage](screenshots//montage_2023.png)
 
 ## Acknowledgements
 
