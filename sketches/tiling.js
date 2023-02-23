@@ -1,8 +1,8 @@
 let sides = 3;
 
 let correctTilings = [3, 4, 6];
-const height = 400;
-const width = 1850;
+const height = 530;
+const width = 872;
 
 let shapes = [
   "triangles",
@@ -32,18 +32,6 @@ function changeSides(val) {
   // update value of input with id sideCounter
   let counter = document.getElementById("counter");
   counter.innerHTML = val;
-
-  // update text and style if id feedback
-  let feedback = document.getElementById("feedback");
-  if (correctTilings.includes(sides)) {
-    feedback.innerHTML = `<div class="h-min basis-1/2 my-5 p-2 bg-gradient-to-br from-green-400/50 to-green-600/50 rounded-lg shadow-lg text-slate-100 border border-green-400 text-center">
-      ${shapes[sides - 3]} make a tiling
-    </div>`;
-  } else {
-    feedback.innerHTML = `<div class="h-min basis-1/2 my-5 p-2 bg-gradient-to-br from-red-400/50 to-red-600/50 rounded-lg shadow-lg text-slate-100 border border-red-400 text-center">
-      ${shapes[sides - 3]} do not make a tiling
-    </div>`;
-  }
 }
 
 function degreesToRadians(degrees) {
@@ -76,8 +64,8 @@ function sketch_tilings(p) {
     p.clear();
     p.fill(255);
     p.stroke(255);
-    p.translate(height / 2, height / 2);
-    let polygonSize = 41;
+    p.translate(height / 2 + 20, height / 2);
+    let polygonSize = 80;
     p.polygon(0, 0, polygonSize, sides);
   };
 

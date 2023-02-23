@@ -1,0 +1,9 @@
+\beamer@sectionintoc {1}{Introduction}{3}{0}{1}
+\beamer@subsectionintoc {1}{1}{Crystals}{3}{0}{1}
+\beamer@subsectionintoc {1}{2}{Quasicrystals}{6}{0}{1}
+\beamer@sectionintoc {2}{Cut and project method}{7}{0}{2}
+\beamer@subsectionintoc {2}{1}{General workings}{7}{0}{2}
+\beamer@subsectionintoc {2}{2}{Example 1: Fibonacci Tiling}{8}{0}{2}
+\beamer@subsectionintoc {2}{3}{Example 2: Penrose Tiling}{9}{0}{2}
+\beamer@sectionintoc {3}{Our work progress}{10}{0}{3}
+\beamer@sectionintoc {4}{Sources}{11}{0}{4}

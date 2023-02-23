@@ -12,7 +12,7 @@ let slope = 0;
 
 function resetVals() {
   changeAngle(radiansToDegrees(theta));
-  changeThickness(1.6);
+  changeThickness(0.8);
 }
 
 resetVals();
@@ -42,57 +42,27 @@ function radiansToDegrees(radians) {
   return radians * (180 / PI);
 }
 
-let width, height, gradient, offs, scale;
-let gradient2, thickness2, verticalHeight, regionWidth, xprojec, versch, deltax;
-
-let yMax, yMin, x_accepted, y_accepted;
-let slider, slider2;
-
-function im(y) {
-  return height - y;
-}
-
-function reim(y) {
-  return height - im(y);
-}
-
-function maxAccepted(x, g) {
-  return g * x + verticalHeight / 2;
-}
-
-function minAccepted(x, g) {
-  return g * x - verticalHeight / 2;
-}
-
-function isWithinRegion(x, y, g) {
-  return y > minAccepted(x, g) && y < maxAccepted(x, g);
-}
-
 function sketch_tilings(p) {
-  // function maxAccepted(x) {
-  //   return slope * x + thickness / 2 + epsilon;
-  // }
+  let width, height, gradient, offs, scale;
+  let gradient2,
+    thickness2,
+    verticalHeight,
+    regionWidth,
+    xprojec,
+    versch,
+    thick,
+    gr,
+    deltax;
 
-  // function minAccepted(x) {
-  //   return slope * x - thickness / 2 - epsilon;
-  // }
-  // function isWithinRegion(x, y) {
-  //   return y > minAccepted(x) && y < maxAccepted(x);
-  // }
+  let yMax, yMin, x_accepted, y_accepted;
+  let slider, slider2;
 
-  p.isWithinRegion1 = function (x, y, g, th, v) {
-    if (y >= (x - v) * g) {
-      return p.cos(p.atan(g)) * (y - (x - v) * g) < th;
-    } else {
-      return p.cos(p.atan(g)) * ((x - v) * g - y) < th;
-    }
-  };
-
-  p.linedash = function (x1, y1, x2, y2, delta, style = "-") {
+  function linedash(x1, y1, x2, y2, delta, style = "-") {
     let distance = p.dist(x1, y1, x2, y2);
     let dashNumber = distance / delta;
     let xDelta = (x2 - x1) / dashNumber;
     let yDelta = (y2 - y1) / dashNumber;
+
     for (let i = 0; i < dashNumber; i += 2) {
       let xi1 = i * xDelta + x1;
       let yi1 = i * yDelta + y1;
@@ -107,23 +77,58 @@ function sketch_tilings(p) {
         p.ellipse(xi1, yi1, delta / 2);
       }
     }
-  };
+  }
+
+  function im(y) {
+    return height - y;
+  }
+
+  function reim(y) {
+    return height - im(y);
+  }
+
+  function maxAccepted(x, g) {
+    return g * x + verticalHeight / 2;
+  }
+
+  function minAccepted(x, g) {
+    return g * x - verticalHeight / 2;
+  }
+
+  function isWithinRegion(x, y, g) {
+    return y > minAccepted(x, g) && y < maxAccepted(x, g);
+  }
+
+  function isWithinRegion1(x, y, g, th, v) {
+    if (y >= (x - v) * g) {
+      return p.cos(p.atan(g)) * (y - (x - v) * g) < th;
+    } else {
+      return p.cos(p.atan(g)) * ((x - v) * g - y) < th;
+    }
+  }
 
   p.setup = function () {
+    tau = (1 + p.sqrt(5)) / 2.0;
+    gr = 1 / tau;
+    theta = p.atan(1 / tau);
+    thick = (p.cos(theta) + p.sin(theta)) * gr;
     x_accepted = [];
     y_accepted = [];
     gradient = 2;
     versch = 0;
-    (offs = 0), (scale = 40), (width = 1000); //Faktor 16!!!
-    height = 640;
-    regionWidth = 20;
+    (offs = 40 * 1.5), (scale = 40 * 1.5), (width = 480 * 1.5); //Faktor 12!!!
+    height = 480 * 1.5;
+
+    // (offs = 40), (scale = 60), (width = 480 * 2); //Faktor 12!!!
+    // height = 570;
+
+    regionWidth = 14;
     p.createCanvas(width, height);
-    p.background(255);
+    // p.background(255);
+    p.background(0, 0, 0, 0);
     p.draw();
   };
 
-  let oldAngle = -1;
-  let oldThickness = -1;
   p.draw = function () {
     let val = angle;
     let val2 = thicknessIn;
@@ -131,9 +136,10 @@ function sketch_tilings(p) {
     if (val == gradient && val2 == thickness2 && val3 == versch) {
       return;
     }
+    // p.background(255);
     p.clear();
-    p.fill(255);
-    p.stroke(255);
+    p.background(0, 0, 0, 0);
+    p.translate(0, -offs + 5);
     x_accepted = [];
     y_accepted = [];
     thickness2 = val2;
@@ -146,51 +152,50 @@ function sketch_tilings(p) {
     ys = im(offs);
     yMin = p.floor(minAccepted(0, gradient));
     yMax = p.ceil(maxAccepted(regionWidth, gradient));
-    p.fill(112, 26, 117);
+    p.fill("#fae");
+    // p.fill(249, 168, 212);
     p.noStroke();
     p.quad(
       xs,
-      ys +
-        versch * gradient * scale -
-        (thickness2 / p.cos(p.atan(gradient))) * scale,
-      xs + width - 2 * offs,
-      im(
-        gradient * (width - 2 * offs) +
-          (thickness2 / p.cos(p.atan(gradient))) * scale -
-          versch * gradient * scale
-      ) - offs,
-      xs + width - 2 * offs,
-      im(
-        gradient * (width - 2 * offs) -
-          (thickness2 / p.cos(p.atan(gradient))) * scale -
-          versch * gradient * scale
-      ) - offs,
+      height / 2 -
+        (xs - width / 2 - versch * scale) * gradient +
+        (thickness2 * scale) / p.cos(val),
+      xs + (width - 2 * offs),
+      height / 2 -
+        (xs + (width - 2 * offs) - width / 2 - versch * scale) * gradient +
+        (thickness2 * scale) / p.cos(val),
+      xs + (width - 2 * offs),
+      height / 2 -
+        (xs + (width - 2 * offs) - width / 2 - versch * scale) * gradient -
+        (thickness2 * scale) / p.cos(val),
       xs,
-      ys +
-        versch * gradient * scale +
-        (thickness2 / p.cos(p.atan(gradient))) * scale
+      height / 2 -
+        (xs - width / 2 - versch * scale) * gradient -
+        (thickness2 * scale) / p.cos(val)
     );
     for (x = offs; x < width; x = x + scale) {
       for (y = offs; y < height; y = y + scale) {
+        // p.fill(0);
+        // p.stroke(0, 0, 0);
         p.fill(255);
         p.stroke(255);
         p.ellipse(x, im(y), 2, 2);
       }
     }
-    for (x = 0; x <= regionWidth; x++) {
-      for (y = 0; y <= 14; y++) {
-        if (p.isWithinRegion1(x, y, gradient, thickness2, versch)) {
+    for (x = -20; x <= 20; x++) {
+      for (y = -20; y <= 20; y++) {
+        if (isWithinRegion1(x, y, gradient, thickness2, versch)) {
           x_accepted.push(x);
           y_accepted.push(y);
         }
       }
     }
     for (i = 0; i < x_accepted.length; i++) {
-      p.fill(232, 121, 249);
-      p.stroke(232, 121, 249);
+      p.fill(255, 0, 0);
+      p.stroke(255, 0, 0);
       p.ellipse(
-        x_accepted[i] * scale + offs,
-        im(y_accepted[i] * scale + offs),
+        x_accepted[i] * scale + offs + width / 2 - scale,
+        im(y_accepted[i] * scale + offs + height / 2 - scale),
         5,
         5
       );
@@ -198,32 +203,81 @@ function sketch_tilings(p) {
         x_accepted[i] +
         p.sin(val) * p.cos(val) * (y_accepted[i] - x_accepted[i] * gradient);
       deltax = p.sin(val) ** 2 * versch;
-      p.linedash(
-        x_accepted[i] * scale + offs,
-        im(y_accepted[i] * scale + offs),
-        (xprojec + deltax) * scale + offs,
-        im(gradient * (xprojec + deltax - versch) * scale + offs),
+      linedash(
+        x_accepted[i] * scale + offs + width / 2 - scale,
+        im(y_accepted[i] * scale + offs + height / 2 - scale),
+        (xprojec + deltax) * scale + offs + width / 2 - scale,
+        im(
+          gradient * (xprojec + deltax - versch) * scale +
+            offs +
+            height / 2 -
+            scale
+        ),
         2
       );
       p.ellipse(
-        (xprojec + deltax) * scale + offs,
-        im(gradient * (xprojec + deltax - versch) * scale + offs),
+        (xprojec + deltax) * scale + offs + width / 2 - scale,
+        im(
+          gradient * (xprojec + deltax - versch) * scale +
+            offs +
+            height / 2 -
+            scale
+        ),
         3,
         3
       );
     }
     p.line(
       xs,
-      ys + versch * gradient * scale,
+      height / 2 - (xs - width / 2 - versch * scale) * gradient,
       xs + (width - 2 * offs),
-      im(gradient * (width - 2 * offs) - versch * gradient * scale) - offs
+      height / 2 -
+        (xs + (width - 2 * offs) - width / 2 - versch * scale) * gradient
     );
-    p.fill(255);
+    // p.fill(255);
+    p.fill(30, 41, 59);
     p.noStroke();
     p.quad(0, 0, width, 0, width, offs, 0, offs);
-    p.quad(0, height - offs, width, height - offs, width, height, 0, height);
+    p.quad(
+      0,
+      height - offs,
+      width,
+      height - offs,
+      width,
+      height + offs,
+      0,
+      height + offs
+    );
     p.quad(0, 0, offs, 0, offs, height, 0, height);
     p.quad(width - offs, 0, width, 0, width, height, width - offs, height);
+    p.noFill();
+    // p.stroke(0);
+    p.stroke(255);
+    p.quad(
+      offs,
+      offs,
+      width - offs,
+      offs,
+      width - offs,
+      height - offs,
+      offs,
+      height - offs
+    );
+    for (i = 0; i < x_accepted.length; i++) {
+      xprojec =
+        x_accepted[i] +
+        p.sin(val) * p.cos(val) * (y_accepted[i] - x_accepted[i] * gradient);
+      deltax = p.sin(val) ** 2 * versch;
+      p.fill(255, 0, 0);
+      p.stroke(255, 0, 0);
+      p.ellipse(
+        (xprojec + deltax) * scale + offs + width / 2 - scale,
+        height,
+        10,
+        10
+      );
+    }
   };
 }
+
 new p5(sketch_tilings, "tilings");

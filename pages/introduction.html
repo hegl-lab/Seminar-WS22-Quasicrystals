@@ -20,14 +20,14 @@
       src="https://kit.fontawesome.com/d992066cd9.js"
       crossorigin="anonymous"
     ></script>
-    <title>Introduction</title>
+    <title>Introduction Quasicrystals</title>
   </head>
   <body
     class="bg-gradient-to-r from-pink-500 to-yellow-500 text-white m-4 sm:m-8 md:m-16"
   >
     <!-- <a href="../index.html"> Home </a> -->
     <h1 class="text-3xl sm:text-4xl md:text-5xl text-center font-mono">
-      Introduction
+      Introduction Quasicrystals
     </h1>
     <p class="text-center text-sm">
       about tilings & how to fill areas periodically with them
@@ -36,99 +36,87 @@
     <div
       class="h-min basis-1/2 m-2 p-2 bg-gradient-to-br from-slate-50 to-slate-200 text-slate-900 rounded-lg font-mono tracking-tight leading-tight shadow-lg"
     >
-      <h2 class="text-2xl">Tilings</h2>
+      <h2 class="text-2xl">Introduction Quasicrystals</h2>
       <p class="text-justify">
-        A tiling is a set of geometric shapes, called tiles, that are arranged
-        in such a way to fill a plane without gaps or overlaps. A tiling can be
-        periodic or non- periodic. Periodic tilings are constructed with a
-        repeating pattern - the tiling has translational symmetry. The different
-        types of tiles that make up a tiling are called the prototiles of that
-        tiling. A tiling may be constructed using one or many prototiles.
+        It has been known for a long time that the atomic structure of some
+        solid materials (f.e. rocks and ice) display a highly ordered, periodic
+        arrangement. Materials, that meet this criteria, are called crystals.
+        They can be observed in nature in various shapes and symmetries and were
+        the subject of research for generations of scientists. But in 1982
+        Israelian Physicist Dan Shechtman stumbled upon an odd locking electron
+        diffraction pattern while conduction a routine study of an
+        aluminium-manganese alloy \(Al_6Mn\). On first sight this pattern seemed
+        to have the properties of a crystalline structure, but it lacked one
+        thing: periodicity. Soon after the term quasicrystal was used to
+        describe the observation Shechtman had made.<br />
+        In the following we will try to get a grip on the mathematical
+        understanding of aperiodic patterns as the one Shechtman discovered. We
+        will start by giving the broad definition of tilings and discussing
+        certain types.
       </p>
     </div>
     <div class="flex flex-col sm:flex-col md:flex-row">
-      <div
-        class="h-min basis-1/2 m-2 p-2 bg-gradient-to-br from-slate-50 to-slate-200 text-slate-900 rounded-lg font-mono tracking-tight leading-tight shadow-lg"
-      >
-        <h2 class="text-2xl">Periodic Tilings</h2>
-        <p class="text-justify">
-          The simplest tilings are constructed using regular polygons as the
-          single prototile. There are only three possible regular polygon
-          tilings: made of equilateral triangles, squares or regular hexagons.
-          These have three–, four–, and six–fold rotational symmetry
-          respectively. It is not possible to tile a plane with pen- tagons,
-          because the internal angle of a pentagon, 108°, is not a divisor of
-          360°. The same restriction applies to n > 6–sided polygons.
-        </p>
-        <br />
+      <div class="h-min basis-1/2">
         <div
-          class="h-min basis-1/2 mt-5 md:m-2 py-4 md:p-2 px-10 bg-gradient-to-br from-slate-900 to-slate-700 rounded-lg shadow-lg text-slate-100"
+          class="h-min basis-1/2 m-2 p-2 bg-gradient-to-br from-slate-50 to-slate-200 text-slate-900 rounded-lg font-mono tracking-tight leading-tight shadow-lg"
         >
-          <h3 class="text-2xl text-center">Try out</h3>
-          <div class="flex flex-col md:flex-row">
-            <div class="text-center">Polygon sides</div>
-
-            <input
-              class="mx-0 md:mx-5"
-              type="range"
-              min="3"
-              max="10"
-              value="3"
-              oninput="changeSides(this.value)"
-              onchange="changeSides(this.value)"
-            />
-            <div class="text-center" id="counter">3</div>
-          </div>
-          <div id="feedback">
-            <div
-              class="h-min basis-1/2 my-5 p-2 bg-gradient-to-br from-green-400/50 to-green-600/50 rounded-lg shadow-lg text-slate-100 border border-green-400 text-center"
-            >
-              triangles make a tiling
+          <h2 class="text-2xl">Tilings</h2>
+          <p class="text-justify">
+            Informally, a tiling is the covering of a plane using geometrical
+            shapes, called tiles, so that the plane is filled entirely and the
+            tiles do not overlap. Mathematically, this can be defined as a
+            collection of open and disjoint sets, so that the closures of these
+            sets cover the whole plane. A tiling is called periodic, if a
+            certain translation of the plane results in an unchanged pictures.
+            One simple example for this is the tiling of \(\mathbb{R}^2\) using
+            only one regular polygons as seen in the interactive figure below
+            (it can be shown, that this is only possible for triangles, cubes
+            and hexagons).
+            <br />
+            It is obvious how conventional crystals can be thought of as
+            periodic tilings. But what about quasicrystals? <br />
+            The fitting mathematical model for these are the so-called aperiodic
+            tilings, which are defined as non-periodic tilings that also do not
+            contain any arbitrarily large periodic regions or patches. Several
+            methods for generating aperiodic tilings are known, but we will
+            focus on the so-called Cut-and-Project-Method. This method can be
+            understood best by looking into a simple example, the
+            one-dimensional aperiodic Fibonacci tiling (see next page).
+          </p>
+        </div>
+        <div
+          class="h-min basis-1/2 m-2 p-2 bg-gradient-to-br from-slate-50 to-slate-200 text-slate-900 rounded-lg font-mono tracking-tight leading-tight shadow-lg"
+        >
+          <h2 class="text-2xl">Try it out</h2>
+          <p class="text-justify">Change the number of sides</p>
+          <br />
+          <div
+            class="h-min basis-1/2 mt-5 md:m-2 py-4 md:p-2 px-10 bg-gradient-to-br from-slate-900 to-slate-700 rounded-lg shadow-lg text-slate-100"
+          >
+            <h3 class="text-2xl text-center">Try out</h3>
+            <div class="flex flex-col md:flex-row">
+              <div class="text-center">Polygon sides</div>
+              <select
+                name="sides"
+                id="cars"
+                onchange="changeSides(this.value) "
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              >
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="6">6</option>
+              </select>
             </div>
           </div>
+          <br />
         </div>
       </div>
       <div
         id="tilings"
-        class="overflow-hidden h-min basis-1/2 m-2 p-2 bg-gradient-to-br from-slate-900 to-slate-700 rounded-lg shadow-lg"
-      >
-        <button
-          id="maxbtn"
-          onclick="maximize()"
-          class="text-4xl text-white -mt-2 -ml-2 bg-slate-900 drop-shadow-lg p-2 rounded-lg absolute"
-        >
-          <i class="fa-solid fa-expand"></i>
-        </button>
-      </div>
+        class="overflow-hidden h-min w-1/2 m-2 p-2 bg-gradient-to-br from-slate-900 to-slate-700 rounded-lg shadow-lg"
+      ></div>
     </div>
     <!-- <div class="pb-16"></div> -->
-    <div
-      class="h-min basis-1/2 m-2 p-2 bg-gradient-to-br from-slate-50 to-slate-200 text-slate-900 rounded-lg font-mono tracking-tight leading-tight shadow-lg"
-    >
-      <h2 class="text-2xl">Quasiperiodic tilings</h2>
-      <p class="text-justify">
-        subset of non-periodic tilings are quasiperiodic tilings. Although these
-        tilings are not periodic, every finite region within the tiling
-        reappears infinitely many times. Some quasiperiodic tilings also exhibit
-        forbidden orders of rota- tional symmetry. The concept of quasiperiodic
-        tilings have been of interest to physicists as a mathematical model of
-        quasicrystals (QCs) since their discovery in 1982 by Dan Shechtman [1].
-        This discovery was made following observations of a rapidly cooled
-        aluminium-manganese alloy through an electron microscope. QCs are
-        structures that possess long-range order, but not translational
-        symmetry. The atomic structures of QCs are associated with quasiperiodic
-        tilings. The QC discovered by Shechtman possesses fivefold symmetry, and
-        other QCs have been found to possess other forbidden symmetries. These
-        materials are typically synthesised in the laboratory. Following
-        analysis conducted in 2009 by Paul Steinhardt on a Siberian meteorite
-        sample [2] the first natural QC, icosahedrite, was found. The golden
-        ratio, τ, is intrinsically linked to many of the tilings discussed in
-        this report. This irrational number appears when the ratio of two
-        quantities is equal to the ratio of their sum and the larger value.
-        Expressed algebraically: $$\tau = \cfrac{a+b}{a}+
-        \cfrac{a}{b}=\cfrac{1+\sqrt{5}}{2}$$
-      </p>
-    </div>
 
     <div
       id="tilings"

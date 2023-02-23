@@ -27,40 +27,53 @@
     </h1>
     <p class="text-center text-sm">the simplest quasiperiodic tiling</p>
     <div class="pb-16"></div>
-    <div
+    <div class="flex flex-col sm:flex-col md:flex-row">
+      <div class="h-min basis-1/2">
+      <div
       class="h-min basis-1/2 m-2 p-2 bg-gradient-to-br from-slate-50 to-slate-200 text-slate-900 rounded-lg font-mono tracking-tight leading-tight shadow-lg"
     >
-      <h2 class="text-2xl">The Fibonacci Sequence</h2>
+      <h2 class="text-2xl">Cut-and-Project and the Fibonacci tiling</h2>
       <p class="text-justify">
-        The simplest quasiperiodic tiling is the Fibonacci sequence. This is a
-        1-dimensional set of segments of two possible lengths: short (S) and
-        long (L). The ratio be- tween the length of these two segments is the
-        golden ratio, τ. Generations of this sequence can be created using the
-        the Cut and Project Method seeing below.
+        The Cut-and-Project method is the most versatile method for generating
+        aperiodic tilings. Here is how it works:
+        <ul class="list-decimal ml-10">
+        <li>
+        Start with
+        a \(n\)-dimensional lattice \( \Lambda \subset \mathbb{R}^n\) with \(n
+        \ge 2\) (a lattice is a subset, which is closed under addition f.e.
+        \(\mathbb{Z}^n\))
+        </li>
+        <li> Take an affin-linear subspace \(E\) of dimension
+        \(m < n\) and thereby \(\textbf{cut}\) \(\mathbb{R}^n\)</li>
+        </li>
+        <li>
+        \(\textbf{Project}\) all points of \(\Lambda\) onto \(E^{\perp}\) and check
+        if they fall into a certain cut window
+        </li>
+        <li> \(\textbf{Project}\) all
+        accepted points onto \(E\)
+        </li>
+      </ul>
+        For certain lattices and
+        subspaces the projected points can be the vertices of a aperiodic tiling
+        in \(m\)-dimensional space.<br /> In our first example we choose \(n=2\),
+        \(m=1\) and \(\Lambda=\mathbb{Z}^2\). \(E\) then is a slope with an
+        angle \(\theta\) to the \(x\)-axis and an offset \(\gamma\) to the
+        origin. In the interactive figure below you can play with the values for
+        \(\theta\) and \(\gamma\) and also change the thickness of the cut
+        window \(\Delta\) to see what kind of one dimensional patterns are
+        created and how this is done.<br /> If we set \(\theta = \arctan(1/\tau)\),
+        where \(\tau\) is the golden ratio, and \(\Delta = \sin(\theta) +
+        \cos(\theta)\) we obtain a one dimensional aperiodic tiling called the
+        Fibonacci tiling.
       </p>
     </div>
-    <div class="flex flex-col sm:flex-col md:flex-row">
       <div
         class="h-min basis-1/2 m-2 p-2 bg-gradient-to-br from-slate-50 to-slate-200 text-slate-900 rounded-lg font-mono tracking-tight leading-tight shadow-lg"
       >
-        <h2 class="text-2xl">The Cut and Project Method in 1D</h2>
+        <h2 class="text-2xl">Try it out</h2>
         <p class="text-justify">
-          In order to generate one-dimensional quasiperiodic sequences, we first
-          define a 2D periodic tiling. A slice is projected through this
-          periodic tiling, at an angle of θ to the x–axis, and of a given
-          thickness Δ. Points that fall within this region are ‘accepted’ .
-          These accepted points are then projected onto a line parallel to this
-          slice. By then rotating these projected points by the angle θ, these
-          points are now parallel to the x–axis. This process is shown in Figure
-          10. Provided the angle formed describes an irrational gradient for
-          this region, the sequence produced will exhibit quasiperiodicity.
-          Rational gradients will give periodic sequences. If the thickness and
-          angle of this region are chosen specifically as θ = tan−1( 1 τ ) and ∆
-          = τ (sinθ + cosθ), then the resulting sequence will be a section of
-          the Fibonacci sequence as seen previously. If the thickness is
-          increased by a factor of τ, as seen on the right of Figure 10, the
-          resulting sequence will be another Fibonacci sequence, deflated with
-          respect to the original sequence.
+          Try out to change the values for the angle \(\theta\), the thickness of the cut window and the offset
         </p>
         <br />
         <div
@@ -68,12 +81,12 @@
         >
           <h3 class="text-2xl text-center">Try out</h3>
           <div class="flex flex-col md:flex-row">
-            <div class="text-center">Angle...:</div>
+            <div class="text-center">Angle....:</div>
             <input
               class="mx-0 md:mx-5"
               type="range"
-              min="0"
-              max="89"
+              min="-70"
+              max="70"
               value="0"
               oninput="changeAngle(this.value)"
               onchange="changeAngle(this.value)"
@@ -81,27 +94,27 @@
             <div class="text-center" id="angle">0</div>
           </div>
           <div class="flex flex-col md:flex-row">
-            <div class="text-center">Thickness</div>
+            <div class="text-center">Thickness:</div>
             <input
               class="mx-0 md:mx-5"
               type="range"
               min="0"
-              max="3"
+              max="1"
               step="0.1"
-              value="2"
+              value="1"
               oninput="changeThickness(this.value)"
               onchange="changeThickness(this.value)"
             />
             <div class="text-center" id="thickness">2</div>
           </div>
           <div class="flex flex-col md:flex-row">
-            <div class="text-center">Shift....</div>
+            <div class="text-center">Offset...:</div>
             <input
               class="mx-0 md:mx-5"
               type="range"
-              min="-1"
-              max="1"
-              step="0.01"
+              min="-5"
+              max="5"
+              step="0.1"
               value="0"
               oninput="changeShift(this.value)"
               onchange="changeShift(this.value)"
@@ -110,23 +123,15 @@
           </div>
         </div>
       </div>
+      </div>
       <div
+        class="grid overflow-hidden h-min basis-1/2 m-2 p-2 bg-slate-800 rounded-lg shadow-lg place-content-center">
+        <div
         id="tilings"
-        class="overflow-hidden h-min basis-1/2 m-2 p-2 bg-gradient-to-br from-slate-900 to-slate-700 rounded-lg shadow-lg"
-      ></div>
+        ></div>
+      </div>
     </div>
     <!-- <div class="pb-16"></div> -->
-    <div
-      class="h-min basis-1/2 m-2 p-2 bg-gradient-to-br from-slate-50 to-slate-200 text-slate-900 rounded-lg font-mono tracking-tight leading-tight shadow-lg"
-    >
-      <h2 class="text-2xl">Note</h2>
-      <p class="text-justify">
-        The vertices of a section of the 1D Fibonacci sequence can be created by
-        intersecting a 1D slice at an angle to the x–axis of \(\Theta =
-        \tan^{-1}(\cfrac{1}{\tau})\) with a 2D lattice. The fibonacci sequence
-        then follows by projection.
-      </p>
-    </div>
 
     <div
       id="tilings"
@@ -140,8 +145,8 @@
     </button> -->
       <div class="text-2xl">
         <span class="font-bold">Coming up: </span>
-        Fibonacci tilings in higher dimensions (2D).
-        <a class="underline underline-offset-4" href="./cut-and-project2D.html"
+        Penrose tiling
+        <a class="underline underline-offset-4" href="./cut-and-projectPenrose.html"
           >Click to continue</a
         >
         or

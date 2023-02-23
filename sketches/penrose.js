@@ -1,273 +1,242 @@
 const width = 900;
 const height = 600;
 
-let maxMesh = 1;
+const RASTER_DEFAULT = 200;
+const GRID_DEFAULT = 800;
+
+let maxMesh = 4;
 const minMesh = -maxMesh;
 
-function coordsToPixel([x, y]) {}
+let OFF = [0, 0, 0, 0, 0.1];
 
-let lambda = Array(5).fill(0);
-let l1, l2, l3, l4, l5;
-// let oldtime = 450;
-// let oldtime = 230;
-let oldtime = 120;
+let settings = Array(3).fill(0);
+let xPos, yPos, offset;
+let scaleCanvas = 130;
 
-let etas;
-let W;
-let mesh1;
-
-function changeLambdaX(val) {
-  l1 = parseFloat(val);
-  document.getElementById("lambdaX").innerHTML = val;
-}
-function changeLambdaY(val) {
-  l2 = parseFloat(val);
-  document.getElementById("lambdaY").innerHTML = val;
-}
-function changeLambdaZ(val) {
-  l3 = parseFloat(val);
+function changeZoom(val) {
+  scaleCanvas = parseInt(val);
   document.getElementById("lambdaZ").innerHTML = val;
 }
-function changeLambdaC(val) {
-  l4 = parseFloat(val);
+function changeXScroll(val) {
+  xPos = (parseFloat(val) * scaleCanvas) / 10;
+  document.getElementById("lambdaX").innerHTML = val;
+}
+function changeYScroll(val) {
+  yPos = (parseFloat(val) * scaleCanvas) / 10;
+  document.getElementById("lambdaY").innerHTML = val;
+}
+function changeOffset(val) {
+  offset = parseFloat(val);
   document.getElementById("lambdaC").innerHTML = val;
 }
-function changeLambdaV(val) {
-  l5 = parseFloat(val);
-  document.getElementById("lambdaV").innerHTML = val;
+
+let redraw = false;
+let button;
+async function enlargeFrame() {
+  button = document.getElementById("scaleButton");
+  button.innerHTML =
+    'Generating... \
+    <svg \
+      aria-hidden="true" \
+      class="w-6 h-6 mr-2 text-gray-200 animate-spin dark:text-slate-900 fill-slate-100 ml-10" \
+      viewBox="0 0 100 101" \
+      fill="none" \
+      xmlns="http://www.w3.org/2000/svg" \
+    > \
+      <path \
+        d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" \
+        fill="currentColor" \
+      /> \
+      <path \
+        d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" \
+        fill="currentFill" \
+      /> \
+    </svg>';
+
+  raster *= 1.5;
+  gridMax = gridMax * 1.7;
+  // continue after 1 second
+  await new Promise((r) => setTimeout(r, 1));
+  redraw = true;
 }
 
-function sketch_tilings(p) {
-  function genMesh5D(lower, upper) {
-    var mesh = [];
-    for (x = lower; x <= upper; x++) {
-      for (y = lower; y <= upper; y++) {
-        for (z = lower; z <= upper; z++) {
-          for (v = lower; v <= upper; v++) {
-            for (w = lower; w <= upper; w++) {
-              mesh.push([x, y, z, v, w]);
-            }
-          }
-        }
-      }
-    }
-    return mesh;
-  }
+// ------------------ CODE FOR PENROSE TILING ------------------
 
-  // works
+const UNITY_BASES = [
+  [1, 0, 0, 0, 0],
+  [0, 1, 0, 0, 0],
+  [0, 0, 1, 0, 0],
+  [0, 0, 0, 1, 0],
+  [0, 0, 0, 0, 1],
+];
+
+const u2dir = [0.632456, -0.511667, 0.19544, 0.19544, -0.511667];
+const v2dir = [0, 0.371748, -0.601501, 0.601501, -0.371748];
+
+let base1, base2, raster, gridMax;
+
+function sketch_tilings(p) {
+  const theta = (2 * p.PI) / 5.0;
+  const tau = Math.sqrt(2 / 5);
+
+  const [px1, px2, px3, px4, px5] = [
+    tau,
+    Math.cos(theta) * tau,
+    Math.cos(2 * theta) * tau,
+    Math.cos(3 * theta) * tau,
+    Math.cos(4 * theta) * tau,
+  ];
+
+  const [py1, py2, py3, py4, py5] = [
+    0,
+    Math.sin(theta) * tau,
+    Math.sin(2 * theta) * tau,
+    Math.sin(3 * theta) * tau,
+    Math.sin(4 * theta) * tau,
+  ];
+
   function project([_x, _y, _z, _v, _w]) {
-    const theta = (2 * p.PI) / 5.0;
-    const x =
-      (_x +
-        p.cos(theta) * _y +
-        p.cos(2 * theta) * _z +
-        p.cos(3 * theta) * _v +
-        p.cos(4 * theta) * _w) *
-      p.sqrt(2 / 5);
-    const y =
-      (p.sin(theta) * _y +
-        p.sin(2 * theta) * _z +
-        p.sin(3 * theta) * _v +
-        p.sin(4 * theta) * _w) *
-      p.sqrt(2 / 5);
+    const x = px1 * _x + px2 * _y + px3 * _z + px4 * _v + px5 * _w;
+    const y = py2 * _y + py3 * _z + py4 * _v + py5 * _w;
     return [x, y];
   }
 
-  function diff([_x, _y, _z, _v, _w], [x, y, z, v, w]) {
-    return [_x - x, _y - y, _z - z, _v - v, _w - w];
+  function scale5D(scalar, [x, y, z, u, v]) {
+    return [scalar * x, scalar * y, scalar * z, scalar * u, scalar * v];
   }
 
-  function scalarMult(a, [x, y, z, v, w]) {
-    return [a * x, a * y, a * z, a * v, a * w];
+  function add5D([x, y, z, u, v], [x2, y2, z2, u2, v2]) {
+    return [x + x2, y + y2, z + z2, u + u2, v + v2];
   }
 
-  // works
-  function projectOrth([_x, _y, _z, _v, _w]) {
-    const theta = (2 * p.PI) / 5.0;
-    const x =
-      (_x +
-        p.cos(2 * theta) * _y +
-        p.cos(4 * theta) * _z +
-        p.cos(1 * theta) * _v +
-        p.cos(3 * theta) * _w) *
-      p.sqrt(2 / 5);
-    const y =
-      (p.sin(2 * theta) * _y +
-        p.sin(4 * theta) * _z +
-        p.sin(1 * theta) * _v +
-        p.sin(3 * theta) * _w) *
-      p.sqrt(2 / 5);
-    const z = (_x + _y + _z + _v + _w) * p.sqrt(1 / 5);
-    return [x, y, z];
-  }
+  p.round5D = function ([x, y, z, v, w]) {
+    return [p.round(x), p.round(y), p.round(z), p.round(v), p.round(w)];
+  };
 
-  // works
-  function dotProduct3D([x, y, z], [u, v, w]) {
-    return x * u + y * v + z * w;
-  }
-
-  // works
-  function crossProduct3D([x, y, z], [u, v, w]) {
-    return [y * w - z * v, z * u - x * w, x * v - y * u];
-  }
-
-  // works
-  function norm3D([x, y, z]) {
-    return p.sqrt(x * x + y * y + z * z);
-  }
-
-  function norm5D([x, y, z, v, w]) {
-    return p.sqrt(x * x + y * y + z * z + v * v + w * w);
-  }
-
-  // function generateIthEta()
-
-  function generateEtas() {
-    const etas = [];
-    for (let i = 0; i < 5; i++) {
-      for (let j = 0; j < 5; j++) {
-        // unit vector dim 5 with 1 at position i
-        let e_r = Array(5).fill(0);
-        e_r[i] = 1;
-        // unit vector dim 5 with 1 at position j
-        let e_s = Array(5).fill(0);
-        e_s[j] = 1;
-
-        // projectOrth both
-        let e_r_proj = projectOrth(e_r);
-        let e_s_proj = projectOrth(e_s);
-
-        // cross product
-        let tmp = crossProduct3D(e_r_proj, e_s_proj);
-
-        // normalize
-        let tmp_norm = norm3D(tmp);
-        if (tmp_norm === 0) {
-          continue;
-        }
-
-        // divide by norm
-        let eta = [tmp[0] / tmp_norm, tmp[1] / tmp_norm, tmp[2] / tmp_norm];
-        //let etaMinus = [-eta[0], -eta[1], -eta[2]];
-
-        etas.push(eta);
-        //etas.push(etaMinus);
-      }
-    }
-    return etas;
-  }
-
-  function inCutWindow([x, y, z, v, w]) {
-    // const etas = generateEtas();
-    // console.log("etas: " + etas.length);
-    const projected = projectOrth([x, y, z, v, w]);
-    for (let j = 0; j < etas.length; j++) {
-      let eta = etas[j];
-      // const maxI = W.map(w => dotProduct3D(w, eta)).reduce((a, b) => Math.max(a, b))
-      // const I = W.map((w) => dotProduct3D(w, eta));
-      const I = [];
-      for (let i = 0; i < W.length; i++) {
-        I.push(dotProduct3D(eta, W[i]));
-      }
-      if (I.length === 0) {
-        // console.log("I is empty");
-      }
-      // get max element from I
-      let maxI = I[0];
-      for (let i = 1; i < I.length; i++) {
-        if (I[i] > maxI) {
-          maxI = I[i];
-        }
-      }
-      if (isNaN(maxI)) {
-        // console.log("I is " + I);
-      }
-      // console.log("maxI: " + maxI);
-      if (dotProduct3D(eta, projected) > maxI) {
-        return false;
-      }
-    }
-    return true;
-  }
+  let cache = new Map();
+  let scale = -1;
+  let kdtree;
 
   p.setup = function () {
-    etas = generateEtas();
-    WMesh = genMesh5D(-1 / 2, 1 / 2);
-    W = [];
-    for (let i = 0; i < WMesh.length; i++) {
-      W.push(projectOrth(WMesh[i]));
-    }
-    lambda = Array(5).fill(0);
-    l1 = 0.25;
-    l2 = 0.25;
+    settings = Array(5).fill(0);
+    xPos = 0.25;
+    yPos = 0.25;
     l3 = 0.25;
-    l4 = 0.25;
+    offset = 0.25;
     l5 = 0.25;
-    mesh1 = genMesh5D(minMesh, maxMesh);
+    const theta = (2 * p.PI) / 5.0;
+    raster = RASTER_DEFAULT;
+    gridMax = GRID_DEFAULT;
+    base1 = [
+      p.sqrt(2 / 5),
+      p.cos(theta) * p.sqrt(2 / 5),
+      p.cos(2 * theta) * p.sqrt(2 / 5),
+      p.cos(3 * theta) * p.sqrt(2 / 5),
+      p.cos(4 * theta) * p.sqrt(2 / 5),
+    ];
+    base1 = scale5D(1.0 / raster, base1);
+    base2 = [
+      0,
+      p.sin(theta) * p.sqrt(2 / 5),
+      p.sin(2 * theta) * p.sqrt(2 / 5),
+      p.sin(3 * theta) * p.sqrt(2 / 5),
+      p.sin(4 * theta) * p.sqrt(2 / 5),
+    ];
+    base2 = scale5D(1.0 / raster, base2);
+
     p.createCanvas(width, height);
     p.stroke(255);
     p.draw();
   };
 
-  // Penrose tiling
   p.draw = function () {
-    // let startTime = Date.now();
-    const scale = 85;
-    if (
-      lambda[0] === -l1 &&
-      lambda[1] === -l2 &&
-      lambda[2] === -l3 &&
-      lambda[3] === -l4 &&
-      lambda[4] === -l5
-    ) {
-      if (maxMesh > 3) {
-        return;
-      }
-      maxMesh += 1;
-      mesh1 = genMesh5D(-maxMesh, maxMesh);
-    } else {
-      maxMesh = 1;
-    }
-    p.clear();
-    p.translate(width / 2, height / 2);
+    maxMesh = 3;
+    startTime = Date.now();
+    if (inputsAreSame()) return;
+    else p.resetCanvas();
 
-    lambda = [-l1, -l2, -l3, -l4, -l5];
-    const mesh = [];
-    for (let i = 0; i < mesh1.length; i++) {
-      mesh.push(diff(mesh1[i], lambda));
+    if (wasCached(offset)) {
+      kdtree = cache.get(offset);
+    } else {
+      kdtree = buildTreeFromAcceptedPoints();
     }
-    // console.log(mesh.length);
-    const accepted = [];
-    for (let i = 0; i < mesh.length; i++) {
-      if (inCutWindow(mesh[i])) {
-        accepted.push(mesh[i]);
-      }
+
+    cache.set(offset, kdtree);
+    projectAllPoints(kdtree);
+
+    if (redraw === true) {
+      redraw = false;
+      button.innerHTML = "Click to get larger frame";
     }
-    // console.log(accepted.length);
-    const acceptedProjected = [];
-    for (let i = 0; i < accepted.length; i++) {
-      acceptedProjected.push(project(accepted[i]));
-    }
-    for (let i = 0; i < acceptedProjected.length; i++) {
-      const [x, y] = acceptedProjected[i];
-      p.ellipse(x * scale - l1 * scale, y * scale - l2 * scale, 3, 3);
-      for (let j = i + 1; j < accepted.length; j++) {
-        const [v, w] = acceptedProjected[j];
-        if (norm5D(diff(accepted[i], accepted[j])) <= 1) {
+  };
+
+  function projectAllPoints(kdtree) {
+    for (const point of kdtree.inOrderTraversal()) {
+      // acceptedProjected.push(project(point));
+      projectedP = project(point);
+      // p.ellipse(projectedP[0] * scale, projectedP[1] * scale, 3, 3);
+      for (i = 0; i < 5; i++) {
+        neighborI = add5D(point, UNITY_BASES[i]);
+        if (kdtree.search(neighborI)) {
+          projectedNeighborI = project(neighborI);
           p.line(
-            x * scale - l1 * scale,
-            y * scale - l2 * scale,
-            v * scale - l1 * scale,
-            w * scale - l2 * scale
+            (projectedP[0] - xPos) * scale,
+            (projectedP[1] - yPos) * scale,
+            (projectedNeighborI[0] - xPos) * scale,
+            (projectedNeighborI[1] - yPos) * scale
           );
         }
       }
     }
-    // let currentTime = Date.now() - startTime;
-    // if (currentTime < oldtime)
-    //   console.log(`time: ${currentTime} ms improved from ${oldtime} ms`);
-    // else console.log(`time: ${currentTime} ms worse than ${oldtime} ms`);
+  }
+
+  function buildTreeFromAcceptedPoints() {
+    kdtree = new KDTree([]);
+    let vecTmp0, vecTmp1, vecAdded, vecOff, vecRound;
+    for (let i = 0; i < 2 * gridMax; i++) {
+      vecTmp0 = scale5D(i - gridMax, base1);
+      for (let j = 0; j < 2 * gridMax; j++) {
+        vecTmp1 = scale5D(j - gridMax, base2);
+        vecAdded = add5D(vecTmp0, vecTmp1);
+        vecOff = add5D(vecAdded, OFF);
+        vecRound = p.round5D(vecOff);
+        if (!kdtree.search(vecRound)) {
+          kdtree.insert(vecRound);
+        }
+      }
+    }
+    return kdtree;
+  }
+
+  function wasCached(l4) {
+    return cache.has(l4) && !redraw;
+  }
+
+  p.resetCanvas = function () {
+    if (!redraw) {
+      raster = RASTER_DEFAULT;
+      gridMax = GRID_DEFAULT;
+    } else {
+    }
+    for (var i = 0; i < 5; i++) {
+      OFF[i] = offset * v2dir[i] + offset * u2dir[i];
+    }
+    scale = scaleCanvas;
+    p.clear();
+    p.translate(width / 2, height / 2);
+
+    settings = [-xPos, -yPos, -offset];
   };
+
+  function inputsAreSame() {
+    return (
+      settings[0] === -xPos &&
+      settings[1] === -yPos &&
+      settings[2] === -offset &&
+      scale === scaleCanvas &&
+      !redraw
+    );
+  }
 }
 
 new p5(sketch_tilings, "tilings");
